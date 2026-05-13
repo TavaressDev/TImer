@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import fs from 'fs';
 import http from 'http';
 import { Server } from 'socket.io';
@@ -31,14 +32,20 @@ const resolvePublicPath = () => {
     return resolvedPath;
 };
 
+const corsOptions = {
+    origin: true,
+    methods: ["GET", "POST"],
+};
+
 const io = new Server(server, {
     cors: {
-        origin: true,
-        methods: ["GET", "POST"]
+        origin: corsOptions.origin,
+        methods: corsOptions.methods
     },
     transports: ["websocket", "polling"],
 });
 
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const emitTimerState = () => {

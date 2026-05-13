@@ -44,6 +44,17 @@ const getSocketUrl = () => {
   return window.location.origin;
 };
 
+const getApiUrl = (path: string) => {
+  const baseUrl = getSocketUrl();
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (baseUrl === window.location.origin) {
+    return normalizedPath;
+  }
+
+  return `${baseUrl}${normalizedPath}`;
+};
+
 export const TimerProvider = ({ children }: { children: ReactNode }) => {
   const socketRef = useRef<Socket | null>(null);
   const adminTokenRef = useRef<string | null>(null);
@@ -77,7 +88,7 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const refreshState = useCallback(() => {
-    fetch("/api/timer/state")
+    fetch(getApiUrl("/api/timer/state"))
       .then((response) => response.json())
       .then((data: ServerTimerState) => applyServerState(data))
       .catch(() => undefined);
@@ -117,7 +128,7 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
 
     const action = event.replace("admin:", "");
 
-    fetch("/api/admin/action", {
+    fetch(getApiUrl("/api/admin/action"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +147,7 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
 
   const loginAdmin = (password: string) => {
     const loginWithHttpFallback = () =>
-      fetch("/api/admin/login", {
+      fetch(getApiUrl("/api/admin/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),

@@ -1,4 +1,7 @@
 import crypto from "crypto";
+import dotenv from "dotenv";
+
+dotenv.config({ path: [".env.local", ".env"] });
 
 const DEFAULT_DEV_PASSWORD = "1234";
 const isProduction = process.env.NODE_ENV === "production";
