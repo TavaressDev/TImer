@@ -40,7 +40,7 @@ const LoginModal = ({ onLogin }: LoginModalProps) => {
         {step === 'initial' ? (
           <>
             <DialogHeader className="border-b border-slate-100 px-6 pb-5 pt-6">
-              <DialogTitle className="text-xl font-semibold tracking-tight text-slate-950">Rise Timer</DialogTitle>
+              <DialogTitle className="text-xl font-semibold tracking-tight text-slate-950">Timer</DialogTitle>
               <DialogDescription className="text-slate-500">
                 Escolha como deseja abrir o cronômetro.
               </DialogDescription>

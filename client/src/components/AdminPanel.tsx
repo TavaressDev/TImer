@@ -167,7 +167,7 @@ export const AdminPanel = ({ onLogout }: AdminPanelProps) => {
     <div className="min-h-screen bg-slate-50 p-4 text-slate-950 md:p-6">
       <header className="mx-auto mb-6 flex max-w-7xl flex-col gap-3 border-b border-slate-200 pb-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-500">Rise Timer</p>
+          <p className="text-sm font-medium text-slate-500">Timer</p>
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Painel de controle</h1>
         </div>
 
