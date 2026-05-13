@@ -34,8 +34,8 @@ server/   API Express, Socket.IO, persistencia e empacotamento
 Use os arquivos de exemplo como referencia:
 
 ```bash
-cp .env.example .env.local
 cp client/.env.example client/.env.local
+cp server/.env.example server/.env.local
 ```
 
 Variaveis principais:
