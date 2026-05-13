@@ -1,9 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from './ui/dialog'
 import { Button } from './ui/button'
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { useTimer } from '@/context/useTimer'
+import { Eye, EyeOff } from 'lucide-react'
 
 export type LoginType = 'guest' | 'admin' | null
 
@@ -14,11 +15,13 @@ interface LoginModalProps {
 const LoginModal = ({ onLogin }: LoginModalProps) => {
     const [step, setStep] = useState<'initial' | 'admin'>('initial')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
     const [open, setOpen] = useState(true)
     const { loginAdmin } = useTimer()
 
     const handleLoginAdmin = async () => {
+        setError('')
         const loginResult = await loginAdmin(password.trim())
 
         if (loginResult.ok) {
@@ -32,6 +35,12 @@ const LoginModal = ({ onLogin }: LoginModalProps) => {
             setError('Senha incorreta')
         }
     }
+
+    const handleAdminSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        void handleLoginAdmin()
+    }
+
   return (
     <>
       <div className="min-h-screen bg-slate-50" />
@@ -64,20 +73,40 @@ const LoginModal = ({ onLogin }: LoginModalProps) => {
                 Digite a senha para controlar o roteiro.
               </DialogDescription>
             </DialogHeader>
-            <div className='flex flex-col gap-3 p-6'>
+            <form className='flex flex-col gap-3 p-6' onSubmit={handleAdminSubmit}>
               <Label htmlFor='password'>Senha</Label>
-              <Input className="h-11 bg-white" type='password' value={password} onChange={(e) => {
-                setPassword(e.target.value)
-                setError('')
-              }} id='password' />
-              {error && <p className='rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700'>{error}</p>}
-              <Button className="h-10 bg-slate-950 hover:bg-slate-800" onClick={handleLoginAdmin}>
+              <div className="relative">
+                <Input
+                  className="h-11 bg-white pr-11"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    setError('')
+                  }}
+                  id='password'
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? 'password-error' : undefined}
+                  autoComplete="current-password"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="absolute right-1 top-1/2 h-9 w-9 -translate-y-1/2 p-0 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+              {error && <p id="password-error" className='rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700'>{error}</p>}
+              <Button type="submit" className="h-10 bg-slate-950 hover:bg-slate-800">
                 Fazer Login
               </Button>
               <Button className="h-10 border-slate-200" type='button' variant='outline' onClick={() => setStep('initial')}>
                 Voltar
               </Button>
-            </div>
+            </form>
           </>
         )}
       </DialogContent>

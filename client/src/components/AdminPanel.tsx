@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { TimerDisplay } from "./TimerDisplay"
 import { ServiceList, type ServiceItem } from "./ServiceList"
+import { RemoveItemDialog } from "./RemoveItemDialog"
 import { LogOut, Pause, Play, SkipBack, SkipForward, Square } from "lucide-react"
 import { useTimer } from "@/context/useTimer"
 import type { PlaylistItemType } from "@/context/timer-context"
@@ -47,6 +48,7 @@ export const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   const [newType, setNewType] = useState<PlaylistItemType>("louvor")
   const [formError, setFormError] = useState("")
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
+  const [itemPendingRemoval, setItemPendingRemoval] = useState<ServiceItem | null>(null)
 
   const { 
     timeFormatted, 
@@ -86,12 +88,14 @@ export const AdminPanel = ({ onLogout }: AdminPanelProps) => {
   }
 
   const handleRemoveItem = (item: ServiceItem) => {
-    const confirmed = window.confirm(`Remover "${item.title}" do cronograma?`)
-    if (!confirmed) {
-      return
-    }
+    setItemPendingRemoval(item)
+  }
 
-    removePlaylistItem(item.id)
+  const handleConfirmRemoveItem = () => {
+    if (!itemPendingRemoval) return
+
+    removePlaylistItem(itemPendingRemoval.id)
+    setItemPendingRemoval(null)
   }
 
   const handleEditItem = (item: ServiceItem) => {
@@ -165,6 +169,12 @@ export const AdminPanel = ({ onLogout }: AdminPanelProps) => {
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 text-slate-950 md:p-6">
+      <RemoveItemDialog
+        item={itemPendingRemoval}
+        onCancel={() => setItemPendingRemoval(null)}
+        onConfirm={handleConfirmRemoveItem}
+      />
+
       <header className="mx-auto mb-6 flex max-w-7xl flex-col gap-3 border-b border-slate-200 pb-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-slate-500">Timer</p>
